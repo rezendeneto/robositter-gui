@@ -2,14 +2,15 @@
 #include "GUI/src/mainwindow.h"
 
 int main(int argc, char *argv[]) {
-
-    //CvCapture * camera = cvCreateCameraCapture(0);
-
     QApplication a(argc, argv);
 
-    MainWindow *mainWindow = new MainWindow(cvCaptureFromCAM(0));
+    CvCapture *camera = cvCaptureFromCAM(1);
+
+    if(!camera)
+        return 0;
+
+    MainWindow *mainWindow = new MainWindow(camera);
     mainWindow->show();
 
     return a.exec();
-
 }

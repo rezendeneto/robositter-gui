@@ -7,12 +7,14 @@ SOURCES += \
     src/main.cpp \
     GUI/src/mainwindow.cpp \
     GUI/src/configwidget.cpp \
-    GUI/src/qopencvwidget.cpp
+    GUI/src/qopencvwidget.cpp \
+    color-tracker/colortracker.cpp
 
 HEADERS += \
     GUI/src/mainwindow.h \
     GUI/src/configwidget.h \
-    GUI/src/qopencvwidget.h
+    GUI/src/qopencvwidget.h \
+    color-tracker/colortracker.h
 
 FORMS += \
     GUI/ui/mainwindow.ui \

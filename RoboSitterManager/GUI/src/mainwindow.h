@@ -6,8 +6,8 @@
 #include <QString>
 
 #include "qopencvwidget.h"
-
 #include "configwidget.h"
+#include "colortracker.h"
 
 #include <cv.h>
 #include <highgui.h>
