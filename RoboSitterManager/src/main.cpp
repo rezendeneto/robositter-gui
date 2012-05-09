@@ -3,13 +3,12 @@
 
 int main(int argc, char *argv[]) {
 
+    //CvCapture * camera = cvCreateCameraCapture(0);
+
     QApplication a(argc, argv);
 
-    MainWindow mw;
-    mw.show();
-
-    mw.loadVideoFile("");
-    mw.playVideo();
+    MainWindow *mainWindow = new MainWindow(cvCaptureFromCAM(0));
+    mainWindow->show();
 
     return a.exec();
 
