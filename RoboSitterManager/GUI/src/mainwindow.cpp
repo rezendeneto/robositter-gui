@@ -20,6 +20,11 @@ MainWindow::MainWindow(CvCapture *cam, QWidget *parent) : QMainWindow(parent), u
 
     cc = 1;
 
+    QTimer *t = new QTimer( this );
+    t->setSingleShot(false);
+    connect( t,  SIGNAL( timeout() ),this, SLOT( update() ));
+    t->start(100);
+
     startTimer(10);
 }
 
@@ -29,11 +34,29 @@ MainWindow::~MainWindow() {
 
 }
 
+void MainWindow::setConnRobot(bool cr) {
+
+    connRobot = cr;
+}
+
+bool MainWindow::getConnRobot() {
+
+    return connRobot;
+
+}
+
 /*
  *
  * Private
  *
  */
+
+void MainWindow::update(){
+
+    setStatusInfo();
+    repaint();
+
+}
 
 void MainWindow::setStatusInfo(){
 

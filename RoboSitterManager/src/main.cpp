@@ -1,16 +1,21 @@
 #include <QtGui/QApplication>
 #include "GUI/src/mainwindow.h"
+#include "connrobo.h"
+
+#define CAM_INDEX 0
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    CvCapture *camera = cvCaptureFromCAM(1);
+    CvCapture *camera = cvCaptureFromCAM(CAM_INDEX);
 
     if(!camera)
         return 0;
 
     MainWindow *mainWindow = new MainWindow(camera);
     mainWindow->show();
+
+    ConnRobo cr(mainWindow);
 
     return a.exec();
 }

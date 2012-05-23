@@ -8,13 +8,15 @@ SOURCES += \
     GUI/src/mainwindow.cpp \
     GUI/src/configwidget.cpp \
     GUI/src/qopencvwidget.cpp \
-    color-tracker/colortracker.cpp
+    color-tracker/colortracker.cpp \
+    src/connrobo.cpp
 
 HEADERS += \
     GUI/src/mainwindow.h \
     GUI/src/configwidget.h \
     GUI/src/qopencvwidget.h \
-    color-tracker/colortracker.h
+    color-tracker/colortracker.h \
+    src/connrobo.h
 
 FORMS += \
     GUI/ui/mainwindow.ui \

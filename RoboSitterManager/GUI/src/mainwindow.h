@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QGridLayout>
 #include <QString>
+#include <QThread>
+#include <QTimer>
 
 #include "qopencvwidget.h"
 #include "configwidget.h"
@@ -34,13 +36,15 @@ class MainWindow : public QMainWindow
         QString alert;
 
         void setStatusInfo();
-        void addAlertInfo(QString addedAlert);
 
         int cc;
 
     public:
         explicit MainWindow(CvCapture *cam, QWidget *parent = 0);
         ~MainWindow();
+        void addAlertInfo(QString addedAlert);
+        void setConnRobot(bool cr);
+        bool getConnRobot();
 
     private slots:
         void on_actionChangeMode_triggered();
@@ -49,6 +53,10 @@ class MainWindow : public QMainWindow
 
     protected:
         void timerEvent(QTimerEvent*);
+
+    public slots:
+        void update();
+
 };
 
 #endif // MAINWINDOW_H
