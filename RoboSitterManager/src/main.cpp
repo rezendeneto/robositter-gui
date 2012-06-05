@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     MainWindow *mainWindow = new MainWindow(camera);
     mainWindow->show();
 
-    ConnRobo cr(mainWindow);
+
 
     return a.exec();
 }
