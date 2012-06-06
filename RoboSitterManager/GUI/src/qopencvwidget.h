@@ -14,11 +14,13 @@ class QOpenCVWidget : public QWidget {
         QVBoxLayout *layout;
 
         QImage image;
+        IplImage *imageColor;
 
     public:
         QOpenCVWidget(QWidget *parent = 0);
         ~QOpenCVWidget(void);
         void putImage(IplImage *);
+        CvScalar getPixelColor(int row, int col);
 };
 
 #endif

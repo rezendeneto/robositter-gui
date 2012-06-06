@@ -10,13 +10,15 @@ namespace Ui {
 
 class ConfigWidget : public QWidget {
     Q_OBJECT
-    
+
     public:
         explicit ConfigWidget(QWidget *parent = 0);
         ~ConfigWidget();
 
     private:
         Ui::ConfigWidget *ui;
+
+    private slots:
 
 };
 

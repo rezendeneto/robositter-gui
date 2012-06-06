@@ -24,6 +24,7 @@ QOpenCVWidget::~QOpenCVWidget(void) {
 
 void QOpenCVWidget::putImage(IplImage *cvimage) {
     int cvIndex, cvLineStart;
+    imageColor = cvimage;
     // switch between bit depths
     switch (cvimage->depth) {
         case IPL_DEPTH_8U:
@@ -59,4 +60,14 @@ void QOpenCVWidget::putImage(IplImage *cvimage) {
             break;
     }
     imagelabel->setPixmap(QPixmap::fromImage(image));
+}
+
+CvScalar QOpenCVWidget::getPixelColor(int i, int j){
+
+        //IplImage* imgHSV = cvCreateImage(cvGetSize(imageColor), 8, 3);
+        //cvCvtColor(imageColor, imgHSV, CV_BGR2HSV);
+        //CvScalar res = cvGet2D(imgHSV,i,j);
+        //cvReleaseImage(&imgHSV);
+        return cvGet2D(imageColor,i,j);
+
 }
