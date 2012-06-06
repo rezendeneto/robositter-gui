@@ -2,7 +2,7 @@
 #include "GUI/src/mainwindow.h"
 #include "connrobo.h"
 
-#define CAM_INDEX 0
+#define CAM_INDEX 1
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);

@@ -5,11 +5,11 @@ ColorTracker::ColorTracker()
 
 }
 
-int _initialH = 8;
-int _initialS = 132;
-int _initialV = 161;
+int _initialH = 48;
+int _initialS = 81;
+int _initialV = 59;
 
-int _finalH = 30;
+int _finalH = 95;
 int _finalS = 255;
 int _finalV = 255;
 

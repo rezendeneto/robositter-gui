@@ -6,7 +6,7 @@ MainWindow::MainWindow(CvCapture *cam, QWidget *parent) : QMainWindow(parent), u
     ui->setupUi(this);
 
     autoMode = false;
-    connCam = false;
+    connCam = true;
     connRobot = false;
     camera = cam;
 
