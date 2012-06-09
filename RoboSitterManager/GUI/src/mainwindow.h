@@ -85,6 +85,7 @@ class MainWindow : public QMainWindow
         void mFinalV();
         void pFinalV();
         void resetColor();
+        void setStart();
 
         void bMoveF();
         void bMoveB();

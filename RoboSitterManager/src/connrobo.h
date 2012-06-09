@@ -6,6 +6,10 @@
 
 #include "control.h"
 #include <iostream>
+#include <fstream>
+#include <fcntl.h>
+
+
 
 using namespace std;
 
@@ -17,7 +21,7 @@ class ConnRobo : public QThread {
         void run();
 
         bool getConnStatus();
-        bool send();
+        bool send(char *msg);
         bool ping();
 
         void setAutoMode(bool m);

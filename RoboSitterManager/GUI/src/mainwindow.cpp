@@ -56,6 +56,7 @@ MainWindow::MainWindow(CvCapture *cam, QWidget *parent) : QMainWindow(parent), u
     connect ( ui->buttonPMaxV, SIGNAL( clicked() ), this, SLOT( pFinalV() )  );
 
     connect ( ui->buttonResetColor, SIGNAL( clicked() ), this, SLOT( resetColor() )  );
+    connect ( ui->buttonSetStart,  SIGNAL( clicked() ), this,SLOT( setStart() ) );
 
     connect ( ui->buttonUP, SIGNAL( pressed() ), this, SLOT( bMoveF() )  );
     connect ( ui->buttonUP, SIGNAL( released() ), this, SLOT( bStop() )  );
@@ -194,7 +195,6 @@ void MainWindow::setStatusInfo(){
 
 void MainWindow::addAlertInfo(QString addedAlert){
 
-    if(alert.size() <= 5000)
     alert.operator +=(addedAlert);
     alert.operator +=(addedAlert.setNum(cc));
     cc++;
@@ -212,6 +212,7 @@ void MainWindow::addAlertInfo(QString addedAlert){
 void MainWindow::on_actionChangeMode_triggered() {
 
     autoMode = !autoMode;
+
     cr->setAutoMode(autoMode);
 
     ui->buttonDOWN->setEnabled(!autoMode);
@@ -244,7 +245,10 @@ void MainWindow::on_actionSair_triggered()
 
 void MainWindow::timerEvent(QTimerEvent*) {
     IplImage *frame = cvQueryFrame(camera);
-    cvwidget->putImage(ColorTracker::doTracking(frame,initialH,initialS,initialV,finalH,finalS,finalV,kid));
+    IplImage *frameHSV = cvCreateImage(cvGetSize(frame), 8, 3);
+    cvCvtColor(frame, frameHSV, CV_BGR2HSV);
+    cvwidget->putImage(ColorTracker::doTracking(frame,frameHSV,initialH,initialS,initialV,finalH,finalS,finalV,kid));
+    cvwidget->setImageColor(frameHSV);
     update();
 }
 
@@ -257,15 +261,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         //QPoint qp = cvwidget->mapFromGlobal(QCursor::pos());
         CvScalar hsv = cvwidget->getPixelColor( event->pos().y(),event->pos().x());
         //cout << cvs.val[0] << "   " << cvs.val[1] << "    " << cvs.val[2] << endl;
-        CvScalar cvs = ColorTracker::convertRGBtoHSV(hsv);
+        //CvScalar cvs = ColorTracker::convertRGBtoHSV(hsv);
 
 
         //cout << qp.x() << "   "<< qp.y()<< endl;
         //cout <<event->pos().x()<< "    " << event->pos().y()<<endl;
 
-        initialH = cvs.val[0] - 15;
+        initialH = hsv.val[0] - 15;
         if(initialH < 0) initialH += 180;
-        finalH = cvs.val[0] + 15;
+        finalH = hsv.val[0] + 15;
         if(finalH >= 180) finalH -= 180;
         //initialS = hsv.val[1];
         //initialV = hsv.val[2];
@@ -319,9 +323,16 @@ void MainWindow::resetColor(){
     finalS = 255;
     initialV = 70;
     finalV = 255;
-    kid->setStartValues(-1,-1,-1,kid->getScreen_width(),kid->getScreen_height());
+    kid->setStartValues(-1,-1,-1);
     kid->setLostable(false);
 
+}
+void MainWindow::setStart(){
+    if(initialH != -1){
+    kid->setStartValues(kid->getArea(),kid->getWidth(),kid->getHeight());
+    //if(initialH != -1){
+        kid->setLostable(true);
+    }
 }
 
 void MainWindow::bMoveF(){

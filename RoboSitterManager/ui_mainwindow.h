@@ -60,6 +60,7 @@ public:
     QLabel *label2;
     QLabel *label3;
     QPushButton *buttonResetColor;
+    QPushButton *buttonSetStart;	
     QPushButton *buttonRotLEFT;
     QPushButton *buttonRotRIGHT;
     QMenuBar *menubar;
@@ -194,7 +195,10 @@ public:
         label3->setGeometry(QRect(590, 290, 20, 20));
         buttonResetColor = new QPushButton(centralwidget);
         buttonResetColor->setObjectName(QString::fromUtf8("buttonResetColor"));
-        buttonResetColor->setGeometry(QRect(550, 320, 75, 23));
+        buttonResetColor->setGeometry(QRect(600, 320, 60, 30));
+	buttonSetStart = new QPushButton(centralwidget);
+        buttonSetStart->setObjectName(QString::fromUtf8("buttonSetStart"));
+        buttonSetStart->setGeometry(QRect(530, 320, 60, 30));
         buttonRotLEFT = new QPushButton(centralwidget);
         buttonRotLEFT->setObjectName(QString::fromUtf8("buttonRotLEFT"));
         buttonRotLEFT->setGeometry(QRect(500, 360, 50, 50));
@@ -315,7 +319,8 @@ public:
         label1->setText(QApplication::translate("MainWindow", "-", 0, QApplication::UnicodeUTF8));
         label2->setText(QApplication::translate("MainWindow", "-", 0, QApplication::UnicodeUTF8));
         label3->setText(QApplication::translate("MainWindow", "-", 0, QApplication::UnicodeUTF8));
-        buttonResetColor->setText(QApplication::translate("MainWindow", "Reset Color", 0, QApplication::UnicodeUTF8));
+        buttonResetColor->setText(QApplication::translate("MainWindow", "Reset", 0, QApplication::UnicodeUTF8));
+	buttonSetStart->setText(QApplication::translate("MainWindow", "Set", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
         buttonRotLEFT->setToolTip(QApplication::translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

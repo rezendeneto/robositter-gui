@@ -6,9 +6,9 @@ Control::Control(Kid* k)
     kid = k;
 
     MIN_HEIGHT = 0.8;
-    MAX_HEIGHT = 1.3;
+    MAX_HEIGHT = 1.2;
     MIN_WIDTH = 0.8;
-    MAX_WIDTH = 1.3 ;
+    MAX_WIDTH = 1.2 ;
     MIN_X_VARIATION = 0.8;
     MAX_X_VARIATION = 1.2;
 
@@ -24,124 +24,16 @@ int Control::action(){
             return STOP;
         }
         //SE O ALVO ESTIVER MUITO PERTO
-        if((kid->getStart_height()*MAX_HEIGHT < kid->getHeight()) && (kid->getStart_width()*MAX_WIDTH < kid->getWidth())){
-
-            //SE O ROBO ESTIVER INDO PARA FRENTE OU RODANDO, ELE PARA
-            if(moving_forward || rotating_left || rotating_right){
+        if(aumentou()){
+            if(moving_forward){
                 stop();
                 return STOP;
             }else{
-
-                //SE O ROBO NÃO ESTIVER INDO PARA TRÁS, VAI PARA TRÁS
-                if(!moving_backward){
-                    move(MOVE_BACKWARD);
-                    return MOVE_BACKWARD;
-                }else{
-
-                    //SE O ALVO ESTIVER DESLOCADO PARA ESQUERDA
-                    if( (kid->getScreen_width()/2)*MIN_X_VARIATION > kid->getX() ){
-                        //SE O ROBO ESTIVER INDO PARA DIREITA PARA
-                        if(moving_right){
-                             stop();
-                            return STOP;
-                        } else {
-                            //SE O ROBO NÃO ESTIVER INDO PARA ESQUERDA, VAI PARA ESQUERDA
-                            if(!moving_left){
-                                move(MOVE_LEFT);
-                                return MOVE_LEFT;
-                            } else {
-                                return STAY;
-                            }
-
-                        }
-                    }else{
-                        //SE O ALVO ESTIVER DESLOCADO PARA A DIREITA
-                        if( (kid->getScreen_width()/2)*MAX_X_VARIATION < kid->getX() ){
-                            //SE O ROBO ESTIVER INDO PARA A ESQUERDA
-                            if(moving_left){
-                                stop();
-                                return STOP;
-                            } else {
-                                //SE O ROBO NÃO ESTIVER INDO PARA A DIREITA
-                                if(!moving_right){
-                                    move(MOVE_RIGHT);
-                                    return MOVE_RIGHT;
-                                }else{
-                                    return STAY;
-                                }
-                            }
-
-                        }else{
-                            return STAY;
-                        }
-
-                    }
-                }
-            }
-        } else {
-
-            //SE O ALVO ESTIVER LONGE
-            if((kid->getStart_height()*MIN_HEIGHT > kid->getHeight()) && (kid->getStart_width()*MIN_WIDTH > kid->getWidth())){
-
-                //SE O ALVO ESTIVER INDO PARA TRÁS OU GIRANDO
-                if(moving_backward || rotating_left || rotating_right){
-                    stop();
-                    return STOP;
-                }else{
-
-                    //SE O ALVO NÃO ESTIVER INDO PARA FRENTE
-                    if(!moving_forward){
-                        move(MOVE_FORWARD);
-                        return MOVE_FORWARD;
-                    }else{
-                        //SE O ALVO ESTIVER SE DESLOCANDO PARA A ESQUERDA
-                        if( (kid->getScreen_width()/2)*MIN_X_VARIATION > kid->getX() ){
-                            //PARA O ROBO SE
-                             if(moving_right){
-                                stop();
-                                return STOP;
-                            } else{
-                                //SE O ROBO NÃO ESTIVER GIRANDO PARA ESQUERDA, VAI PARA ESQUERDA
-                                if(!moving_left){
-                                    move(MOVE_LEFT);
-                                    return MOVE_LEFT;
-                                }else{
-                                    return STAY;
-                                }
-                            }
-                        }else{
-
-                            //SE O ALVO ESTIVER DESLOCADO PARA A DIREITA
-                            if( (kid->getScreen_width()/2)*MAX_X_VARIATION < kid->getX() ){
-                                 //SE O ROBO ESTIVER INDO PARA A ESQUERDA
-                                if(moving_left){
-                                    stop();
-                                    return STOP;
-                                }else{
-                                    //SE O ROBO NÃO ESTIVER INDO PARA A DIREITA
-                                    if(!moving_right){
-                                        move(MOVE_RIGHT);
-                                        return MOVE_RIGHT;
-                                    }else{
-                                        return STAY;
-                                    }
-                                }
-                            }else{
-                                return STAY;
-                            }
-                        }
-
-                    }
-                }
-            }else{
-                //SE O ALVO ESTIVER DESLOCADO PARA DIREITA
-                if( (kid->getScreen_width()/2)*MAX_X_VARIATION < kid->getX() ){
-                    //SE ELE ESTIVER SE MOVENDO OU RODANDO NO OUTRO SENTIDO
-                    if(moving_forward || moving_backward || moving_left || moving_right || rotating_left){
+                if(direita()){
+                    if(rotating_left || moving_backward){
                         stop();
                         return STOP;
                     }else{
-                        //SE ELE NÃO ESTIVER RODANDO
                         if(!rotating_right){
                             move(ROTATE_RIGHT);
                             return ROTATE_RIGHT;
@@ -150,14 +42,11 @@ int Control::action(){
                         }
                     }
                 }else{
-                    //SE O ALVO ESTIVER DESLOCADO PARA A ESQUERDA
-                    if( (kid->getScreen_width()/2)*MIN_X_VARIATION > kid->getX() ){
-                        //SE ELE ESTIVER SE MOVENDO OU RODANDO NO OUTRO SENTIDO
-                        if(moving_forward || moving_backward || moving_left || moving_right || rotating_right){
+                    if(esquerda()){
+                        if(rotating_right || moving_backward){
                             stop();
                             return STOP;
                         }else{
-                            //SE ELE NÃO ESTIVER GIRANDO
                             if(!rotating_left){
                                 move(ROTATE_LEFT);
                                 return ROTATE_LEFT;
@@ -166,30 +55,120 @@ int Control::action(){
                             }
                         }
                     }else{
-                        //SE O ROBO ESTIVER SE MOVENDO
-                        if(moving_forward || moving_backward || moving_left || moving_right || rotating_left || rotating_right){
+                        if(rotating_left || rotating_right){
                             stop();
                             return STOP;
                         }else{
-                            return STAY;
+                            if(!moving_backward){
+                                move(MOVE_BACKWARD);
+                                return MOVE_BACKWARD;
+                            }else{
+                                return STAY;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }else{
+            if(diminuiu()){
+                if(moving_backward){
+                    stop();
+                    return STOP;
+                }else{
+                    if(direita()){
+                        if(rotating_left || moving_forward){
+                            stop();
+                            return STOP;
+                        }else{
+                            if(!rotating_right){
+                                move(ROTATE_RIGHT);
+                                return ROTATE_RIGHT;
+                            }else{
+                                return STAY;
+                            }
+                        }
+                    }else{
+                        if(esquerda()){
+                            if(rotating_right || moving_forward){
+                                stop();
+                                return STOP;
+                            }else{
+                                if(!rotating_left){
+                                    move(ROTATE_LEFT);
+                                    return ROTATE_LEFT;
+                                }else{
+                                    return STAY;
+                                }
+                            }
+                        }else{
+                            if(rotating_left || rotating_right){
+                                stop();
+                                return STOP;
+                            }else{
+                                if(!moving_forward){
+                                    move(MOVE_FORWARD);
+                                    return MOVE_FORWARD;
+                                }
+                            }
+                        }
+                    }
+                }
+            }else{
+                if(moving_forward || moving_backward){
+                    stop();
+                    return STOP;
+                }else{
+                    if(direita()){
+                        if(rotating_left){
+                            stop();
+                            return STOP;
+                        }else{
+                            if(!rotating_right){
+                                move(ROTATE_RIGHT);
+                                return ROTATE_RIGHT;
+                            }else{
+                                return STAY;
+                            }
+                        }
+                    }else{
+                        if(esquerda()){
+                            if(rotating_right){
+                                stop();
+                                return STOP;
+                            }else{
+                                if(!rotating_left){
+                                    move(ROTATE_LEFT);
+                                    return ROTATE_LEFT;
+                                }else{
+                                    return STAY;
+                                }
+                            }
+                        }else{
+                            if(moving_forward || moving_backward || rotating_left || rotating_right){
+                                stop();
+                                return STOP;
+                            }else{
+                                return PING;
+                            }
                         }
                     }
                 }
             }
+        }
 
 
-     }
 
     }else{
-        //SE NÃO ENCONTRAR O ALVO
+        //SE NAO ENCONTRAR O ALVO
         lost = true;
-        if(moving_forward || moving_backward || moving_left || moving_right || rotating_right){
+        if(moving_forward || moving_backward || moving_left || moving_right || rotating_left){
             stop();
             return STOP;
         }else{
-            if(!rotating_left){
-                move(ROTATE_LEFT);
-                return ROTATE_LEFT;
+            if(!rotating_right){
+                move(ROTATE_RIGHT);
+                return ROTATE_RIGHT;
             }else{
                 return STAY;
             }
@@ -230,5 +209,45 @@ void Control::move(int m){
             break;
         default:
             break;
+    }
+}
+
+bool Control::diminuiu(){
+    if(kid->getHeight() < kid->getStart_height()*MIN_HEIGHT && kid->getWidth() < kid->getStart_width()*MIN_WIDTH){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool Control::aumentou(){
+    if((kid->getHeight() > (kid->getStart_height()*MAX_HEIGHT)) && (kid->getWidth() > (kid->getStart_width()*MAX_WIDTH))){
+        return true;
+    }else{
+        if( (kid->getY()-(kid->getHeight()/2) < 1) || (kid->getY()+(kid->getHeight()/2) >= kid->getScreen_height())){
+            if( kid->getWidth() > (kid->getStart_width()*MAX_WIDTH) ){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+}
+
+bool Control::direita(){
+    if( (kid->getScreen_width()/2)*MAX_WIDTH < kid->getX() ){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool Control::esquerda(){
+    if( (kid->getScreen_width()/2)*MIN_WIDTH > kid->getX() ){
+        return true;
+    }else{
+        return false;
     }
 }

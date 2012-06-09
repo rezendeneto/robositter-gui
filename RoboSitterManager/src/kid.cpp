@@ -11,8 +11,8 @@ Kid::Kid()
     start_area = -1;
     start_width = -1;
     start_height = -1;
-    screen_width = -1;
-    screen_height = -1;
+    screen_width = 640;
+    screen_height = 480;
 }
 
 void Kid::setX(int x){
@@ -67,18 +67,16 @@ bool Kid::getLostable(){
     return lostable;
 }
 
-void Kid::setStartValues(int area, int width,int height,int sw,int sh){
+void Kid::setStartValues(int area, int width,int height){
     start_area = area;
     start_width = width;
     start_height = height;
-    screen_width = sw;
-    screen_height = sh;
-    lostable = true;
 }
 
 int Kid::getStart_area(){
     return start_area;
 }
+
 
 int Kid::getStart_width(){
     return start_width;
@@ -88,10 +86,16 @@ int Kid::getStart_height(){
     return start_height;
 }
 
+void Kid::setScreen_width(int sw){
+    screen_width = sw;
+}
 int Kid::getScreen_width(){
     return screen_width;
 }
 
+void Kid::setScreen_height(int sh){
+    screen_height = sh;
+}
 int Kid::getScreen_height(){
     return screen_height;
 }

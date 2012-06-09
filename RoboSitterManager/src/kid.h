@@ -27,12 +27,16 @@ public:
     void setLostable(bool l);
     bool getLostable();
 
-    void setStartValues(int area,int width, int height,int sw,int sh);
+    void setStartValues(int area,int width, int height);
 
     int getStart_area();
     int getStart_width();
     int getStart_height();
+
+    void setScreen_width(int sw);
     int getScreen_width();
+
+    void setScreen_height(int sh);
     int getScreen_height();
 
 

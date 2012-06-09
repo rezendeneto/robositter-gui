@@ -20,7 +20,9 @@ class QOpenCVWidget : public QWidget {
         QOpenCVWidget(QWidget *parent = 0);
         ~QOpenCVWidget(void);
         void putImage(IplImage *);
+        void setImageColor(IplImage* ic);
         CvScalar getPixelColor(int row, int col);
+
 };
 
 #endif

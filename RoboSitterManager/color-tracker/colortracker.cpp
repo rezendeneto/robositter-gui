@@ -7,8 +7,8 @@ ColorTracker::ColorTracker()
 
 IplImage* ColorTracker::getThresholdedImage(IplImage* img, int initialH, int initialS, int initialV, int finalH, int finalS, int finalV) {
             // Converte a imagem em uma imagem com cores no padrão HSV
-            IplImage* imgHSV = cvCreateImage(cvGetSize(img), 8, 3);
-            cvCvtColor(img, imgHSV, CV_BGR2HSV);
+            //IplImage* imgHSV = cvCreateImage(cvGetSize(img), 8, 3);
+            //cvCvtColor(img, imgHSV, CV_BGR2HSV);
 
             // Cria uma imagem de threshold a partir de img
             IplImage* imgThreshed = cvCreateImage(cvGetSize(img), 8, 1);
@@ -16,13 +16,13 @@ IplImage* ColorTracker::getThresholdedImage(IplImage* img, int initialH, int ini
             // Valores de 20,100,100 até 30,255,255 estão funcionando perfeitamente para o amarelo em torno das 6h
             if(initialH != -1){
                 if(initialH <= finalH)
-                    cvInRangeS(imgHSV, cvScalar(initialH, initialS, initialV), cvScalar(finalH, finalS, finalV), imgThreshed);
+                    cvInRangeS(img, cvScalar(initialH, initialS, initialV), cvScalar(finalH, finalS, finalV), imgThreshed);
                 else{
                     IplImage* imgThreshed2 = cvCreateImage(cvGetSize(img), 8, 1);
                     IplImage* imgThreshed3 = cvCreateImage(cvGetSize(img), 8, 1);
 
-                    cvInRangeS(imgHSV, cvScalar(initialH, initialS, initialV), cvScalar(179, finalS, finalV), imgThreshed2);
-                    cvInRangeS(imgHSV, cvScalar(0, initialS, initialV), cvScalar(finalH, finalS, finalV), imgThreshed3);
+                    cvInRangeS(img, cvScalar(initialH, initialS, initialV), cvScalar(179, finalS, finalV), imgThreshed2);
+                    cvInRangeS(img, cvScalar(0, initialS, initialV), cvScalar(finalH, finalS, finalV), imgThreshed3);
 
                     cvAdd(imgThreshed3, imgThreshed2, imgThreshed, NULL);
 
@@ -36,54 +36,55 @@ IplImage* ColorTracker::getThresholdedImage(IplImage* img, int initialH, int ini
 
 
             // Libera memória para o objeto imgHSV
-            cvReleaseImage(&imgHSV);
+            //cvReleaseImage(&imgHSV);
 
             return imgThreshed;
 }
 
-IplImage* ColorTracker::doTracking(IplImage *frame, int initialH, int initialS, int initialV, int finalH, int finalS, int finalV,Kid *k) {
-    IplImage* thresholdedImage = getThresholdedImage(frame,initialH,initialS,initialV,finalH,finalS,finalV);
+IplImage* ColorTracker::doTracking(IplImage *frame,IplImage *frameHSV, int initialH, int initialS, int initialV, int finalH, int finalS, int finalV,Kid *k) {
+    IplImage* thresholdedImage = getThresholdedImage(frameHSV,initialH,initialS,initialV,finalH,finalS,finalV);
         //imagem para o blob
         IplImage* labelImg = cvCreateImage(cvGetSize(frame),IPL_DEPTH_LABEL,1);
-        CvBlobs blobs;
-        //melhora a qualidade do Threshold
-        cvSmooth(thresholdedImage,thresholdedImage,CV_MEDIAN,7,7);
+
+        if(initialH != -1){
+            CvBlobs blobs;
+            //melhora a qualidade do Threshold
+            cvSmooth(thresholdedImage,thresholdedImage,CV_MEDIAN,7,7);
 
 
-        unsigned int result = cvLabel(thresholdedImage,labelImg,blobs);
+            unsigned int result = cvLabel(thresholdedImage,labelImg,blobs);
 
-        //int minx=10000, miny=10000;
-        //int maxx=0, maxy=0;
+            //int minx=10000, miny=10000;
+            //int maxx=0, maxy=0;
 
-        //cvNamedWindow("My Window", CV_WINDOW_AUTOSIZE );
-        //cvShowImage("My Window",thresholdedImage);
-        cvFilterByArea(blobs,250,500000);
+            //cvNamedWindow("My Window", CV_WINDOW_AUTOSIZE );
+            //cvShowImage("My Window",thresholdedImage);
+            cvFilterByArea(blobs,250,500000);
 
-        CvBlob *blob;
+            CvBlob *blob;
 
-        if(cvGreaterBlob(blobs) != 0){
-            blob=blobs[cvGreaterBlob(blobs)];
-            cvRenderBlob(labelImg,blob,frame,frame);
-            k->setX(blob->centroid.x);
-            k->setY(blob->centroid.y);
-            k->setWidth(blob->maxx - blob->minx);
-            k->setHeight(blob->maxy - blob->miny);
-            k->setArea(blob->area);
-            if(k->getStart_area() == -1){
-                k->setStartValues(blob->area,blob->maxx - blob->minx,blob->maxy - blob->miny,cvGetSize(frame).width,cvGetSize(frame).height);
+            if(cvGreaterBlob(blobs) != 0){
+                blob=blobs[cvGreaterBlob(blobs)];
+                cvRenderBlob(labelImg,blob,frame,frame);
+                k->setX(blob->centroid.x);
+                k->setY(blob->centroid.y);
+                k->setWidth(blob->maxx - blob->minx);
+                k->setHeight(blob->maxy - blob->miny);
+                k->setArea(blob->area);
+                k->setScreen_width(cvGetSize(frame).width);
+                k->setScreen_height(cvGetSize(frame).height);
+                k->setLost(false);
+            } else {
+                k->setX(-1);
+                k->setY(-1);
+                k->setArea(-1);
+                k->setWidth(-1);
+                k->setHeight(-1);
+                k->setLost(true);
             }
-            k->setLost(false);
-        } else {
-            k->setX(-1);
-            k->setY(-1);
-            k->setArea(-1);
-            k->setWidth(-1);
-            k->setHeight(-1);
-            k->setLost(true);
+
+
         }
-
-
-
 
         /*int screenx = GetSystemMetrics(SM_CXSCREEN);
         int screeny = GetSystemMetrics(SM_CYSCREEN);
@@ -128,7 +129,7 @@ IplImage* ColorTracker::doTracking(IplImage *frame, int initialH, int initialS, 
                 }
         }*/
 
-       // cvRectangle(frame, cvPoint(minx, miny), cvPoint(maxx == 0 ? -10 : maxx, maxy == 0 ? -10 : maxy), CV_RGB(255,0,0), 3, 0, 0);
+       cvRectangle(frame, cvPoint(frame->width /2 , 0), cvPoint(frame->width/2 , frame->height), CV_RGB(255,0,0), 1, 0, 0);
 
         cvReleaseImage(&thresholdedImage);
         cvReleaseImage(&labelImg);

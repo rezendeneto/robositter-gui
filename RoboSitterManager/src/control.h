@@ -17,6 +17,8 @@ public:
     static const int MOVE_RIGHT = 4;
     static const int ROTATE_LEFT = 5;
     static const int ROTATE_RIGHT = 6;
+    static const int PING = 7;
+
 
 private:
 
@@ -39,6 +41,11 @@ private:
 
     void stop();
     void move(int m);
+
+    bool diminuiu();
+    bool aumentou();
+    bool direita();
+    bool esquerda();
 
 };
 
