@@ -22,6 +22,7 @@ class ConnRobo : public QThread {
 
         bool getConnStatus();
         bool send(char *msg);
+        bool receive(char *msg);
         bool ping();
 
         void setAutoMode(bool m);
@@ -30,10 +31,10 @@ class ConnRobo : public QThread {
         void send_STOP();
         void send_MOVE_FORWARD();
         void send_MOVE_BACKWARD();
-        void send_MOVE_LEFT();
-        void send_MOVE_RIGHT();
         void send_ROTATE_LEFT();
         void send_ROTATE_RIGHT();
+        void send_MODE_AUTO();
+        void send_MODE_MANUAL();
 
     private:
 
@@ -41,6 +42,7 @@ class ConnRobo : public QThread {
         bool sending;
         bool autoMode;
         Control* control;
+        bool w;
 
 
 

@@ -16,7 +16,5 @@ int main(int argc, char *argv[]) {
     MainWindow *mainWindow = new MainWindow(camera);
     mainWindow->show();
 
-
-
     return a.exec();
 }

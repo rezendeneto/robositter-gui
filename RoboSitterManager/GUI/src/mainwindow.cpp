@@ -213,6 +213,11 @@ void MainWindow::on_actionChangeMode_triggered() {
 
     autoMode = !autoMode;
 
+    if(autoMode)
+        cr->send_MODE_AUTO();
+    else
+        cr->send_MODE_MANUAL();
+
     cr->setAutoMode(autoMode);
 
     ui->buttonDOWN->setEnabled(!autoMode);
@@ -343,10 +348,10 @@ void MainWindow::bMoveB(){
 }
 
 void MainWindow::bMoveL(){
-    cr->send_MOVE_LEFT();
+    //cr->send_MOVE_LEFT();
 }
 void MainWindow::bMoveR(){
-    cr->send_MOVE_RIGHT();
+    //cr->send_MOVE_RIGHT();
 }
 void MainWindow::bRotL(){
     cr->send_ROTATE_LEFT();

@@ -1,26 +1,32 @@
 #include "connrobo.h"
-
+#define BUFF_SIZE 3
 
 ConnRobo::ConnRobo(Kid* k) {
 
     connStatus = false;
     sending = false;
     autoMode = false;
-
+    w = false;
     control = new Control(k);
 
     start();
-
-
-
 }
 
 void ConnRobo::run() {
+    while(!w) {
 
-    while(true){
+            char *a = new char[3];
+            a[0] = '7';
+            a[1] = '0';
+            a[2] = '0';
+            w = receive(a);
 
-        if(autoMode){
-            switch(control->action()){
+    }
+
+    while(true) {
+
+        if(autoMode) {
+            switch(control->action()) {
                 case(Control::STOP):
                     send_STOP();
                     break;
@@ -29,12 +35,6 @@ void ConnRobo::run() {
                     break;
                 case(Control::MOVE_BACKWARD):
                     send_MOVE_BACKWARD();
-                    break;
-                case(Control::MOVE_LEFT):
-                    send_MOVE_LEFT();
-                    break;
-                case(Control::MOVE_RIGHT):
-                    send_MOVE_RIGHT();
                     break;
                 case(Control::ROTATE_LEFT):
                     send_ROTATE_LEFT();
@@ -51,7 +51,8 @@ void ConnRobo::run() {
             }
 
         }
-        msleep(500);
+
+        msleep(100);
     }
 
 }
@@ -59,61 +60,75 @@ void ConnRobo::run() {
 bool ConnRobo::ping() {
 
     char* c = new char[3];
-    c[0] = (char)0x07;
-    c[1] = (char)0;
-    c[2] = (char)0;
-
+    c[0] = '7';
+    c[1] = '0';
+    c[2] = '0';
 
     connStatus = send(c);
     return connStatus;
-
 }
 
+bool ConnRobo::receive(char *msg) {
+    int fd1;
+    char* buff = new char[16];
+    int wr;
 
+    msleep(100);
+
+    fd1 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
+
+    fcntl(fd1, F_SETFL, FNDELAY);
+
+
+    if (fd1 == -1) {
+        cout << "s";
+        return false;
+    }
+    else {
+        int bytes = 0;
+        while((bytes = read(fd1, buff, 16)) > 0) {
+            cout << "bytes: " << bytes << endl;
+            cout << "buff: " << buff << endl;
+            if(buff[0] == msg[0] && buff[1] == msg[1] && buff[2] == msg[2]){
+                cout << "msg: " << msg << endl;
+                close(fd1);
+                return true;
+            }
+        }
+    }
+
+    close(fd1);
+    return false;
+}
 
 bool ConnRobo::send(char *msg){
+    if(w){
+        int fd1;
+        char* buff = new char[3*BUFF_SIZE];
+        int wr;
 
-    int fd1;
-    char *buff = new char[3];
-    int wr;
-    bool s = false;
+        fd1 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
 
-    fcntl(fd1, F_SETFL, O_NONBLOCK);
-    fd1 = open("/dev/ttyUSB0", O_RDWR | O_NONBLOCK);
-    //string data="";
+        fcntl(fd1, F_SETFL, FNDELAY);
 
-    if (fd1 == -1)
-        return s;
-    else {
-            fcntl(fd1, F_SETFL, 0);
-
-            wr = write(fd1, msg, 3);
-
-            int bytes=0;
-            bytes = read(fd1, buff, 1);
-
-            //do {
-
-            for(int i = 0; i < 3;i++){
-                bytes = read(fd1,buff,1);
-                if(bytes == 3){
-                    if(buff[0] == msg[0] && buff[1] == msg[1] && buff[2] == msg[2]) s = true;
-                    break;
-                }
+        if (fd1 == -1)
+            return false;
+        else {
+            wr = write(fd1, msg, BUFF_SIZE);
+            int bytes = 0;
+            cout << "Enviei: " <<(unsigned int)msg[0] << (unsigned int)msg[1]<< (unsigned int)msg[2]<< endl;
+            msleep(10);
+            while((bytes = read(fd1, buff,3)) > 0) {
+                cout << msg << endl;
+                cout << buff << endl;
+                cout << "Recebi: " << (unsigned int)buff[0] << (unsigned int)buff[1] << (unsigned int)buff[2] << endl;
             }
-                //if(buff[0]=='\r') {
-                  //  read(fd1,buff,1);
-                    //break;
-                //}
-                //else {
-                    //data.append(1,buff[0]);
-                //}
-            //}while(bytes > 0);
-
         }
 
         close(fd1);
-        return s;
+        return true;
+    }else
+        return false;
 }
 
 bool ConnRobo::getConnStatus(){
@@ -133,46 +148,61 @@ bool ConnRobo::getAutoMode(){
 void ConnRobo::send_STOP(){
     cout << "STOP" << endl;
     char* c = new char[3];
-    c[0] = (char)0x04;
-    c[1] = (char)0x00;
-    c[2] = (char)0x00;
+    c[0] = 4;
+    c[1] = 0;
+    c[2] = 0;
     send(c);
 }
+
 void ConnRobo::send_MOVE_FORWARD(){
     cout << "MOVE_FORWARD" << endl;
     char* c = new char[3];
-    c[0] = (char)0x05;
-    c[1] = (char)0x00;
-    c[2] = (char)0x00;
+    c[0] = 5;
+    c[1] = 0;
+    c[2] = 70;
     send(c);
 }
+
 void ConnRobo::send_MOVE_BACKWARD(){
     cout << "MOVE_BACKWARD" << endl;
     char* c = new char[3];
-    c[0] = (char)0x05;
-    c[1] = (char)0x80;
-    c[2] = (char)0x1E;
+    c[0] = 5;
+    c[1] = 127;
+    c[2] = 70;
     send(c);
 }
-void ConnRobo::send_MOVE_LEFT(){
-    cout << "MOVE_LEFT" << endl;
-}
-void ConnRobo::send_MOVE_RIGHT(){
-    cout << "MOVE_RIGHT" << endl;
-}
+
 void ConnRobo::send_ROTATE_LEFT(){
     cout << "ROTATE_LEFT" << endl;
     char* c = new char[3];
-    c[0] = (char)0x06;
-    c[1] = (char)0x00;
-    c[2] = (char)0x1E;
+    c[0] = 6;
+    c[1] = 0;
+    c[2] = 70;
     send(c);
 }
 void ConnRobo::send_ROTATE_RIGHT(){
     cout << "ROTATE_RIGHT" << endl;
     char* c = new char[3];
-    c[0] = (char)0x06;
-    c[1] = (char)0x01;
-    c[2] = (char)0x1E;
+    c[0] = 6;
+    c[1] = 1;
+    c[2] = 70;
+    send(c);
+}
+
+void ConnRobo::send_MODE_AUTO() {
+    cout << "MODE_AUTO" << endl;
+    char* c = new char[3];
+    c[0] = 2;
+    c[1] = 0;
+    c[2] = 0;
+    send(c);
+}
+
+void ConnRobo::send_MODE_MANUAL() {
+    cout << "MODE_MANUAL" << endl;
+    char* c = new char[3];
+    c[0] = 3;
+    c[1] = 0;
+    c[2] = 0;
     send(c);
 }
